@@ -1,0 +1,7 @@
+.card, .form-control, .btn, .alert{
+  border-radius: 0px;
+}
+
+.icon-left-margin{
+  margin-left: 5px;
+}
