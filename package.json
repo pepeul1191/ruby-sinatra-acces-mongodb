@@ -1,0 +1,18 @@
+{
+  "name": "accessv2",
+  "version": "1.0.0",
+  "description": "$ gem install bundler     $ bundler install     $ rake server:development  # Inicia el servidor en modo de desarrollo     $ rake server:production   # Inicia el servidor en modo de producción     $ rake test:run            # Ejecuta las pruebas",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "bower-install": "bower install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.8.14"
+  }
+}

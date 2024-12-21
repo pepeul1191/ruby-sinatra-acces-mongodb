@@ -1,4 +1,4 @@
 require_relative 'config/environment'
 
-use HomeController
+use LoginController
 run ApplicationController

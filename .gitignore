@@ -16,3 +16,5 @@ public/dist
 public/build
 public/fonts
 tmp
+
+public/vendor

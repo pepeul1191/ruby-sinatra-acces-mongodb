@@ -1,0 +1,22 @@
+{
+  "name": "accessv2",
+  "description": "$ gem install bundler     $ bundler install     $ rake server:development  # Inicia el servidor en modo de desarrollo     $ rake server:production   # Inicia el servidor en modo de producción     $ rake test:run            # Ejecuta las pruebas",
+  "main": "index.js",
+  "authors": [
+    "Pepe Valdivia <pepe.valdivia.caballero@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "5.3.0",
+    "font-awesome": "4.7.0"
+  }
+}
