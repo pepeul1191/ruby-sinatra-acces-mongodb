@@ -19,10 +19,13 @@ class ApplicationController < Sinatra::Base
     env["rack.logger"] = Logger.new(STDOUT)
   end
 
-  before do
-    public_routes = ['/login', '/signup']
-    unless public_routes.include?(request.path_info) || session[:logged]
-      redirect '/login'
+  helpers Helpers
+
+  [
+    '/', '/sign-out',  
+  ].each do |path|
+    before path do
+      check_session_true
     end
   end
 
