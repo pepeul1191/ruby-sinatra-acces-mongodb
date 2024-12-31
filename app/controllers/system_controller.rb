@@ -7,6 +7,7 @@ class SystemController < ApplicationController
   end
 
   get '/systems' do
+    systems = System.all
     message = params[:message] || nil
     status = params[:status] || nil
     locals = { 
@@ -15,11 +16,12 @@ class SystemController < ApplicationController
       error: false,
       status: status,
       message: message,
+      systems: systems,
     }
     erb :'system/index', layout: :'layouts/application', locals: locals
   end
 
-  get '/systems/add' do
+  get '/systems/create' do
     locals = { 
       title: 'Agregar Sistemas', 
       user: 'Usuario demo',
@@ -29,7 +31,7 @@ class SystemController < ApplicationController
     erb :'system/detail', layout: :'layouts/application', locals: locals
   end
 
-  post '/systems/add' do
+  post '/systems' do
     begin
       name = params[:name]
       repo = params[:repo]
@@ -46,5 +48,17 @@ class SystemController < ApplicationController
       redirect "/systems?status=error&message=Ha ocurrido un error en guardar el sistema"
     end
   end
-  
+
+  get '/systems/delete/:_id' do
+    begin
+      _id = params[:_id]
+      system = System.find(_id)
+      system.destroy
+      redirect "/systems?status=success&message=Sistema eliminado</b>"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems?status=error&message=Ha ocurrido un error en editar el sistema"
+    end
+  end
 end
