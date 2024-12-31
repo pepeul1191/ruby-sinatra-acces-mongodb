@@ -26,6 +26,7 @@ class SystemController < ApplicationController
       title: 'Agregar Sistemas', 
       user: 'Usuario demo',
       subtile: 'Agregar Sistema',
+      system: nil,
       error: false
     }
     erb :'system/detail', layout: :'layouts/application', locals: locals
@@ -38,8 +39,8 @@ class SystemController < ApplicationController
       system = System.create!(
         name: name,
         repo: repo,
-        created_at: Time.now,
-        updated_at: Time.now
+        created: Time.now,
+        updated: Time.now
       )
       redirect "/systems?status=success&message=Sistema creado, id: <b>#{system.id}</b>"
     rescue => e
@@ -53,12 +54,49 @@ class SystemController < ApplicationController
     begin
       _id = params[:_id]
       system = System.find(_id)
-      system.destroy
+      system.destroy  
       redirect "/systems?status=success&message=Sistema eliminado</b>"
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
       redirect "/systems?status=error&message=Ha ocurrido un error en editar el sistema"
+    end
+  end
+
+  get '/systems/edit/:_id' do
+    begin
+      _id = params[:_id]
+      system = System.find(_id)
+      locals = { 
+        title: 'Editar Sistema', 
+        user: 'Usuario demo',
+        subtile: 'Editar Sistema',
+        error: false,
+        system: system,
+      }
+      erb :'system/detail', layout: :'layouts/application', locals: locals
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems?status=error&message=Ha ocurrido un error en editar el sistema"
+    end
+  end
+
+  post '/systems/:_id' do
+    begin
+      system = System.find(params[:_id])
+      updated_fields = {}
+      updated_fields[:name] = params[:name] if params[:name]
+      updated_fields[:repo] = params[:repo] if params[:repo]
+      updated_fields[:updated] = Time.now
+      system.update!(updated_fields)
+      redirect "/systems?status=success&message=Sistema actualizado correctamente"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "/systems?status=error&message=No se encontró el sistema con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems?status=error&message=Ocurrió un error al actualizar el sistema"
     end
   end
 end

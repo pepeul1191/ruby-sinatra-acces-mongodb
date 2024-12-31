@@ -21,8 +21,8 @@
         <tr>
           <td><%= system.name %></td>
           <td><%= system.repo %></td>
-          <td><%= system.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
-          <td><%= system.updated_at&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
+          <td><%= system.created.strftime('%Y-%m-%d %H:%M:%S') %></td>
+          <td><%= system.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
           <td>
             <a href="/systems/edit/<%=system.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
             <a href="/systems/delete/<%=system.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
