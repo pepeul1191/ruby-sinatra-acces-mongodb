@@ -1,1 +1,39 @@
-listado de systems
+<div class="container my-2">
+  <h2 class="mb-4 subtitle">Gestión de Sistemas</h2>
+  <% if status %>
+    <div class="alert alert-<%=status == 'success' ? 'success' : 'danger'%>" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
+  <a href="/systems/add" class="btn btn-success"><i class="fa fa-plus icon-left-margin" aria-hidden="true"></i> Agregar Sistema</a>
+  <table class="table table-bordered table-striped" style="margin-top: 20px;">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Juan Pérez</td>
+        <td>juan.perez@example.com</td>
+        <td>Administrador</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>María García</td>
+        <td>maria.garcia@example.com</td>
+        <td>Editor</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Carlos López</td>
+        <td>carlos.lopez@example.com</td>
+        <td>Usuario</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

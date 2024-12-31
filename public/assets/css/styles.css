@@ -5,3 +5,19 @@
 .icon-left-margin{
   margin-left: 5px;
 }
+
+footer > p{
+  margin-bottom: 0px;
+}
+
+footer{
+  margin-top: 40px;
+}
+
+.btn > i{
+  margin-right: 5px;
+}
+
+.subtitle{
+  font-size: 24px;
+}
