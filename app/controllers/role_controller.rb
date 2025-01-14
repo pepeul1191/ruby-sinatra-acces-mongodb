@@ -15,6 +15,7 @@ class RoleController < ApplicationController
     btn_search = params[:btn_search] || nil
     page = params[:page] || 1
     # blogic
+    '''
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
     if search_name and btn_search
@@ -27,7 +28,12 @@ class RoleController < ApplicationController
       systems_count = System.count
       systems = System.skip(offset).limit(step.to_i)
     end
-    #System.where(name: /^Sys|tem$/)
+    '''
+    step = 10.0
+    offset = 0
+    roles = System.fetch_roles(BSON::ObjectId(system_id))
+    puts roles
+    roles_count = 1
     # response
     locals = { 
       title: 'Gestión de Roles del Sistema', 
@@ -35,11 +41,11 @@ class RoleController < ApplicationController
       error: false,
       status: status,
       message: message,
-      systems: systems,
+      roles: roles,
       search_name: search_name, 
       page: page.to_i, 
       system_id: system_id, 
-      total_pages: (systems_count / step).ceil
+      total_pages: (roles_count / step).ceil
     }
     erb :'role/index', layout: :'layouts/application', locals: locals
   end

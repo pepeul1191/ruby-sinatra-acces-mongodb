@@ -32,30 +32,30 @@
         <thead class="table-dark">
           <tr>
             <th>Nombre</th>
+            <th>Descripción</th>
             <th>Creado</th>
             <th>Actualizado</th>
             <th>Operaciones</th>
           </tr>
         </thead>
         <tbody>
-          <% systems.each_with_index do |system, index| %>
+          <% roles.each_with_index do |role, index| %>
             <tr>
-              <td><%= system.name %></td>
-              <td><%= system.created.strftime('%Y-%m-%d %H:%M:%S') %></td>
-              <td><%= system.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
+              <td><%= role.name %></td>
+              <td><%= role.description %></td>
+              <td><%= role.created.strftime('%Y-%m-%d %H:%M:%S') %></td>
+              <td><%= role.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
               <td>
-                <a href="<%= system.repo %>" class="btn btn-secondary" target="_blank"><i class="fa fa-github icon-left-margin" aria-hidden="true"></i>Repositorio</a>
-                <a href="<%= system.repo %>" class="btn btn-secondary"><i class="fa fa-users icon-left-margin" aria-hidden="true"></i>Usuarios</a>
-                <a href="/systems/<%=system.id%>/roles" class="btn btn-secondary"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i>Roles y Permisos</a>
-                <a href="/systems/edit/<%=system.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
-                <a href="/systems/delete/<%=system.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
+                <a href="/roles/<%=role.id%>/roles" class="btn btn-secondary"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i>Permisos</a>
+                <a href="/roles/edit/<%=role.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
+                <a href="/roles/delete/<%=role.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
               </td>
             </tr>
           <% end %>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <span class="pagination-buttons">
                 <% if page != 1 %> 
                   <a href="/systems?page=1<%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i></a>
