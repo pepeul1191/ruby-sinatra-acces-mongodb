@@ -10,12 +10,23 @@ class SystemController < ApplicationController
     # request
     message = params[:message] || nil
     status = params[:status] || nil
+    search_name = params[:name] || nil
+    btn_search = params[:btn_search] || nil
     page = params[:page] || 1
     # blogic
-    step = 15.0
-    systems_count = System.count
+    step = 10.0
     offset = (page.to_i - 1) * step.to_i
-    systems = System.skip(offset).limit(step.to_i)
+    if search_name and btn_search
+      systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
+      systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(0).limit(step.to_i)
+    elsif search_name and (not btn_search)
+      systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
+      systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(offset).limit(step.to_i)
+    else
+      systems_count = System.count
+      systems = System.skip(offset).limit(step.to_i)
+    end
+    #System.where(name: /^Sys|tem$/)
     # response
     locals = { 
       title: 'Gestión de Sistemas', 
@@ -24,6 +35,7 @@ class SystemController < ApplicationController
       status: status,
       message: message,
       systems: systems,
+      search_name: search_name, 
       page: page.to_i, 
       total_pages: (systems_count / step).ceil
     }
@@ -32,7 +44,7 @@ class SystemController < ApplicationController
 
   get '/systems/create' do
     locals = { 
-      title: 'Agregar Sistemas', 
+      title: 'Agregar Sistema', 
       user: 'Usuario demo',
       subtile: 'Agregar Sistema',
       system: nil,

@@ -26,3 +26,7 @@ footer{
   color: black;
   font-size: 18px;
 }
+
+.table-controls > .btn{
+  margin-left: 20px;
+}

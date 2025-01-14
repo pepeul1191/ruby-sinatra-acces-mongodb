@@ -39,7 +39,10 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
-    erb :'home/index', layout: :'layouts/application'
+    locals = { 
+      title: 'Gestión de Accesos', 
+    }
+    erb :'home/index', layout: :'layouts/application', locals: locals
   end
 
   get '/sign-out' do
