@@ -7,9 +7,16 @@ class SystemController < ApplicationController
   end
 
   get '/systems' do
-    systems = System.all
+    # request
     message = params[:message] || nil
     status = params[:status] || nil
+    page = params[:page] || 1
+    # blogic
+    step = 15.0
+    systems_count = System.count
+    offset = (page.to_i - 1) * step.to_i
+    systems = System.skip(offset).limit(step.to_i)
+    # response
     locals = { 
       title: 'Gestión de Sistemas', 
       user: 'Usuario demo',
@@ -17,6 +24,8 @@ class SystemController < ApplicationController
       status: status,
       message: message,
       systems: systems,
+      page: page.to_i, 
+      total_pages: (systems_count / step).ceil
     }
     erb :'system/index', layout: :'layouts/application', locals: locals
   end

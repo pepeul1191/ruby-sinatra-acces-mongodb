@@ -21,3 +21,8 @@ footer{
 .subtitle{
   font-size: 24px;
 }
+
+.pagination-buttons > a{
+  color: black;
+  font-size: 18px;
+}
