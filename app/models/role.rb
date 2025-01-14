@@ -1,10 +1,10 @@
 require 'mongoid'
 
-class System
+class Role
   include Mongoid::Document
   field :name, type: String
-  field :repo, type: String
+  field :description, type: String
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
-  field :role_ids, type: Array, default: [], as: :role_ids
+  field :permission_ids, type: Array, default: [], as: :permission_ids
 end

@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="row">
-    <h2 class="mb-4 subtitle">Gestión de Sistemas</h2>
+    <h2 class="mb-4 subtitle">Gestión de Roles del Sistema</h2>
   </div>
   <% if status %>
     <div class="alert alert-<%=status == 'success' ? 'success' : 'danger'%>" role="alert">
@@ -20,7 +20,7 @@
         <a href="/systems" class="btn btn-secondary">
           <i class="fa fa-undo icon-left-margin" aria-hidden="true"></i> Limpiar
         </a>
-          <a href="/systems/create" class="btn btn-success">
+        <a href="/systems/<%= system_id %>/roles/create" class="btn btn-success">
           <i class="fa fa-plus icon-left-margin" aria-hidden="true"></i> Agregar Registro
         </a>
       </div>

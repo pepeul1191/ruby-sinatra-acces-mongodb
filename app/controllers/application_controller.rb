@@ -34,7 +34,7 @@ class ApplicationController < Sinatra::Base
     path = request.path.split('.')
     if !extensions.include? path[path.length - 1]
       status 404
-      '404: Recurso no encontrado'
+      'Recurso no encontrado'
     end
   end
 
