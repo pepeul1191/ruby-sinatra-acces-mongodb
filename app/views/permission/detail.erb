@@ -22,7 +22,7 @@
           <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= permission&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
         </div>
         <div class="col text-end mt-auto">
-          <a class="btn btn-secondary" href="/systems/<%= system_id %>/roles"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+          <a class="btn btn-secondary" href="/systems/<%= system_id %>/roles/edit/<%= role_id %>"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
           <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
         </div>
       </div>
