@@ -1,8 +1,10 @@
 class SystemController < ApplicationController
-  before do
-    public_routes = ['/systems']
-    unless public_routes.include?(request.path_info) 
-      #check_session_true
+  protected_routes = [
+    '/systems',
+  ]
+  protected_routes.each do |path|
+    before path do
+      check_session_true
     end
   end
 

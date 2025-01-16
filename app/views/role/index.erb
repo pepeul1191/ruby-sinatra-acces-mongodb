@@ -47,7 +47,7 @@
               <td><%= role.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
               <td>
                 <a href="/roles/<%=role.id%>/roles" class="btn btn-secondary"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i>Permisos</a>
-                <a href="/roles/edit/<%=role.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
+                <a href="/systems/<%= system_id %>/roles/edit/<%=role.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
                 <a href="/roles/delete/<%=role.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
               </td>
             </tr>
@@ -58,13 +58,13 @@
             <td colspan="5">
               <span class="pagination-buttons">
                 <% if page != 1 %> 
-                  <a href="/systems?page=1<%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i></a>
-                  <a href="/systems?page=<%=page-1%><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=1<%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%=page-1%><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i></a>
                 <% end %>
                 <label class="pagination-number"><%= page %> / <%= total_pages %></label>
                 <% if page != total_pages %> 
-                  <a href="/systems?page=<%= page+1 %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i></a>
-                  <a href="/systems?page=<%= total_pages %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%= page+1 %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%= total_pages %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i></a>
                 <% end %>
               </span>
             </td>
