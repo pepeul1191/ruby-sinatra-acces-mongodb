@@ -50,7 +50,12 @@ class RoleController < ApplicationController
       subtile: 'Agregar Rol a Sistema',
       system_id: params[:system_id], 
       role: nil,
-      error: false
+      error: false,
+      page: nil,
+      search_name: nil, 
+      total_pages: nil,
+      permissions: nil,
+      permissions_count: nil,
     }
     erb :'role/detail', layout: :'layouts/application', locals: locals
   end
@@ -92,22 +97,51 @@ class RoleController < ApplicationController
 
   get '/systems/:system_id/roles/edit/:_id' do
     begin
+      # request
+      system_id = params[:system_id]
+      message = params[:message] || nil
+      status = params[:status] || nil
+      search_name = params[:name] || nil
       _id = params[:_id]
       system_id = params[:system_id]
+      page = params[:page] || 1
       role = Role.find(_id)
+      # blogic
+      step = 10.0
+      offset = 0
+      '''
+      if search_name and btn_search
+        roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
+        roles = System.fetch_roles(BSON::ObjectId(system_id), step, 0, search_name)
+      elsif search_name and (not btn_search)
+        roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
+        roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset, search_name)
+      else
+        roles_count = System.count_roles(BSON::ObjectId(system_id))
+        roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset)
+      end
+      '''
+      permissions_count = Role.count_permissions(BSON::ObjectId(_id))
+      permissions = Role.fetch_permissions(BSON::ObjectId(_id), step, offset)
+      # response
       locals = { 
         title: 'Editar Rol', 
         user: 'Usuario demo',
         subtile: 'Editar Rol',
         error: false,
         role: role,
+        page: page, 
+        search_name: search_name, 
+        total_pages: (permissions_count / step).ceil,
         system_id: system_id,
+        permissions: permissions,
+        permissions_count: permissions_count,
       }
       erb :'role/detail', layout: :'layouts/application', locals: locals
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
-      redirect "/systems/#{system_id}/roles?status=error&message=Ha ocurrido un error en editar el sistema"
+      redirect "/systems/#{system_id}/roles?status=error&message=Ha ocurrido un error en editar el sistema: #{e.message}"
     end
   end
 

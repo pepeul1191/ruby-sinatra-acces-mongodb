@@ -17,6 +17,8 @@ class ApplicationController < Sinatra::Base
 
   before do
     env["rack.logger"] = Logger.new(STDOUT)
+    headers['server'] = 'Ruby, Ubuntu'
+    headers['X-Database-Engine'] = 'MongoDB'
   end
 
   helpers Helpers
