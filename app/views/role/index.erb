@@ -9,7 +9,7 @@
   <% end %>
   <div class="row align-items-center">
     <!-- Input text -->
-    <form action="<%= search_name ? "/systems?name={search_name}" : "/systems" %>" method="GET">
+    <form action="<%= search_name ? "/systems/#{system_id}/roles?name=#{CGI.escape(search_name)}" : "/systems/#{system_id}/roles" %>" method="GET">
       <div class="col-auto d-flex align-items-center table-controls">
         <label for="inputName" class="form-label me-2 mb-0">Nombre:</label>
         <input type="hidden" name="btn_search" value="1" />
@@ -17,7 +17,7 @@
         <button class="btn btn-primary">
           <i class="fa fa-search icon-left-margin" aria-hidden="true"></i> Buscar
         </button>
-        <a href="/systems" class="btn btn-secondary">
+        <a href="/systems/<%= system_id %>/roles" class="btn btn-secondary">
           <i class="fa fa-undo icon-left-margin" aria-hidden="true"></i> Limpiar
         </a>
         <a href="/systems/<%= system_id %>/roles/create" class="btn btn-success">

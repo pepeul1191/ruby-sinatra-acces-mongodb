@@ -34,14 +34,18 @@ class System
             "updated" => "$roles_info.updated"
           }
         }
-      },
-      {
-        "$skip" => offset                  # Saltar los primeros 'offset' documentos
-      },
-      {
-        "$limit" => step                   # Limitar a 'step' documentos
       }
     ]
+    # Agregar filtro con $regex si search_name no es nil
+    if search_name
+      pipeline << { "$match" => { "name" => { "$regex" => search_name, "$options" => "i" } } }
+    end
+    # Agregar limit y offset
+    pipeline.push(
+      { "$skip" => offset },                # Saltar los primeros 'offset' documentos
+      { "$limit" => step }                  # Limitar a 'step' documentos
+    )
+    # Convertir los resultados en instancias de Role
     self.collection.aggregate(pipeline).map do |doc|
       Role.new(
         id: doc["_id"],
@@ -52,7 +56,7 @@ class System
       )
     end
   end
-
+  
   def self.count_roles(_id, search_name = nil) # (BSON::ObjectId, str) -> int
     pipeline = [
       {
@@ -73,7 +77,19 @@ class System
         "$count" => "total_roles"          # Contar los documentos resultantes
       }
     ]
+    if search_name
+      pipeline << {
+        "$match" => {
+          "roles_info.name" => { "$regex" => search_name, "$options" => "i" }
+        }
+      }
+      # Agregar la etapa de conteo
+      pipeline << {
+        "$count" => "total_roles"            # Contar los documentos resultantes
+      }
+    end
+    # Ejecutar el pipeline y retornar el resultado
     result = self.collection.aggregate(pipeline).first
-    result ? result["total_roles"] : 0
+    result ? result["total_roles"] : 1
   end
 end
