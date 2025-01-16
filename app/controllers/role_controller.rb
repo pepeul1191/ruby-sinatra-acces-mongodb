@@ -15,30 +15,12 @@ class RoleController < ApplicationController
     btn_search = params[:btn_search] || nil
     page = params[:page] || 1
     # blogic
-    '''
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
     if search_name and btn_search
-      systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
-      systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(0).limit(step.to_i)
-    elsif search_name and (not btn_search)
-      systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
-      systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(offset).limit(step.to_i)
-    else
-      systems_count = System.count
-      systems = System.skip(offset).limit(step.to_i)
-    end
-    '''
-    step = 10.0
-    offset = (page.to_i - 1) * step.to_i
-    if search_name and btn_search
-      #systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
-      #systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(0).limit(step.to_i)
       roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
       roles = System.fetch_roles(BSON::ObjectId(system_id), step, 0, search_name)
     elsif search_name and (not btn_search)
-      #systems_count = System.where(name: /#{Regexp.escape(search_name)}/i).count
-      #systems = System.where(name: /#{Regexp.escape(search_name)}/i).skip(offset).limit(step.to_i)
       roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
       roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset, search_name)
     else
