@@ -108,21 +108,9 @@ class RoleController < ApplicationController
       role = Role.find(_id)
       # blogic
       step = 10.0
-      offset = 0
-      '''
-      if search_name and btn_search
-        roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
-        roles = System.fetch_roles(BSON::ObjectId(system_id), step, 0, search_name)
-      elsif search_name and (not btn_search)
-        roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
-        roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset, search_name)
-      else
-        roles_count = System.count_roles(BSON::ObjectId(system_id))
-        roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset)
-      end
-      '''
-      permissions_count = Role.count_permissions(BSON::ObjectId(_id))
-      permissions = Role.fetch_permissions(BSON::ObjectId(_id), step, offset)
+      offset = (page.to_i - 1) * step.to_i
+      permissions_count = Role.count_permissions(BSON::ObjectId(_id), search_name)
+      permissions = Role.fetch_permissions(BSON::ObjectId(_id), step, offset, search_name)
       # response
       locals = { 
         title: 'Editar Rol', 
@@ -130,10 +118,13 @@ class RoleController < ApplicationController
         subtile: 'Editar Rol',
         error: false,
         role: role,
-        page: page, 
+        page: page.to_i, 
+        message: message, 
         search_name: search_name, 
         total_pages: (permissions_count / step).ceil,
         system_id: system_id,
+        status: status, 
+        role_id: _id, 
         permissions: permissions,
         permissions_count: permissions_count,
       }
