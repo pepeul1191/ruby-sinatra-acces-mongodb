@@ -1,0 +1,31 @@
+<div class="container my-2">
+  <h2 class="mb-4 subtitle"><%= subtile %></h2>
+  <div class="my-2">
+    <form action="<%= permission ? "/roles/#{role_id}/permissions/#{permission._id}" : "/roles/#{role_id}/permissions" %>" method="POST">
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label for="txtName" class="form-label">Nombre</label>
+          <input type="text" class="form-control" placeholder="Nombre" aria-label="Nombre" id="txtName" name="name" required value="<%= permission&.name %>">
+        </div>
+        <div class="col-md-8">
+          <label for="txtDescription" class="form-label">Descripción</label>
+          <input type="text" class="form-control" placeholder="Descripción" aria-label="Descripción" id="txtDescription" name="description" required value="<%= permission&.description %>">
+        </div>
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col-md-3">
+          <label for="txtCreated" class="form-label">Fecha de Creación</label>
+          <input type="text" class="form-control" placeholder="Creado" aria-label="Creado" disabled id="txtCreated" value="<%= permission&.created&.strftime('%Y-%m-%d %H:%M:%S') %>">
+        </div>
+        <div class="col-md-3">
+          <label for="txtUpdated" class="form-label">Fecha de Edición</label>
+          <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= permission&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
+        </div>
+        <div class="col text-end mt-auto">
+          <a class="btn btn-secondary" href="/roles/<%= role_id %>/permissions"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+          <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
