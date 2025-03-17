@@ -23,13 +23,12 @@
         </div>
         <div class="col text-end mt-auto">
           <a class="btn btn-secondary" href="/systems/<%= system_id %>/roles"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+          <%if role&.id %>
+            <a class="btn btn-success" href="/roles/<%= role&.id %>/permissions"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i> Permisos</a>
+          <% end %>
           <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
         </div>
       </div>
     </form>
   </div>
-  <%if role&.id %>
-    <h2 class="mb-4 subtitle">Permisos de Rol</h2>
-    <a class="btn btn-success" href="/systems/<%= system_id %>/roles/<%= role&.id %>/permissions"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i> Permisos</a>
-  <% end %>
 </div>

@@ -164,6 +164,7 @@ class UserController < ApplicationController
       user = User.find(params[:_id])
       updated_fields = {} 
       updated_fields[:activated] = (params[:value] == 'true'? true : false) 
+      updated_fields[:updated] = Time.now
       user.update!(updated_fields)
       redirect "users/edit/#{params[:_id]}?status=success&message=Se cambio el estado de de activación del usuario"
     rescue Mongoid::Errors::DocumentNotFound
