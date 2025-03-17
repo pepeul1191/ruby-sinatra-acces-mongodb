@@ -13,4 +13,58 @@ class User
   # field :tokens, type: Array, default: [], as: :tokens
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
+
+  def self.fetch_system_users(system_id, step, offset, search_name = nil, search_email = nil)
+    pipeline = [
+      {
+        "$lookup" => {
+          "from" => "systems",             # Relacionar con systems
+          "localField" => "_id",           # ID de usuario
+          "foreignField" => "user_ids",    # Lista de usuarios en systems
+          "as" => "system_data"            # Campo con la información del sistema
+        }
+      },
+      {
+        "$addFields" => {
+          "filtered_systems" => {
+            "$filter" => {
+              "input" => "$system_data",
+              "as" => "sys",
+              "cond" => { "$eq" => ["$$sys._id", system_id] } # Filtrar sistemas por ID
+            }
+          }
+        }
+      },
+      {
+        "$addFields" => {
+          "registered" => { "$gt" => [{ "$size" => "$system_data" }, 0] } # Verifica si está registrado en al menos un sistema
+        }
+      },
+      {
+        "$project" => {
+          "_id" => { "$toString" => "$_id" }, # Convertir _id a string
+          "name" => 1,
+          "email" => 1,
+          "activated" => 1,
+          "registered" => 1
+        }
+      }
+    ]
+    # Construcción de filtros dinámicos
+    filters = {}
+    filters["name"] = { "$regex" => search_name, "$options" => "i" } if search_name
+    filters["email"] = { "$regex" => search_email, "$options" => "i" } if search_email
+    pipeline.prepend({ "$match" => filters }) unless filters.empty?
+    # Agregar paginación
+    pipeline.push(
+      { "$skip" => offset }, # Saltar los primeros "offset" documentos
+      { "$limit" => step }   # Limitar a "step" documentos
+    )
+    # Convertir los resultados en instancias de User
+    docs = []
+    self.collection.aggregate(pipeline).map do |doc|
+      docs.push(doc)
+    end
+    return docs
+  end  
 end

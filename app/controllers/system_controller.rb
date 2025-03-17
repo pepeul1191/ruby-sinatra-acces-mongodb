@@ -122,4 +122,52 @@ class SystemController < ApplicationController
       redirect "/systems?status=error&message=Ocurrió un error al actualizar el sistema"
     end
   end
+
+  get '/systems/:system_id/users' do
+    # request
+    system_id = params[:system_id]
+    message = params[:message] || nil
+    status = params[:status] || nil
+    search_name = params[:name] || nil
+    search_email = params[:email] || nil
+    btn_search = params[:btn_search] || nil
+    page = params[:page] || 1
+    # blogic
+    step = 10.0
+    offset = (page.to_i - 1) * step.to_i
+    if search_name and btn_search
+      puts 'if +++++++++++++++++++++++'
+      # user_count = User.count_roles(BSON::ObjectId(system_id), search_name)
+      user_count = 20
+      users = User.fetch_system_users(BSON::ObjectId(system_id), step, 0, search_name, search_email)
+    elsif search_name and (not btn_search)
+      # user_count = User.count_users(BSON::ObjectId(system_id), search_name)
+      puts 'elefi +++++++++++++++++++++++'
+      user_count = 20
+      users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset, search_name, search_email)
+    else
+      puts 'else +++++++++++++++++++++++'
+      # user_count = User.count_users(BSON::ObjectId(system_id))
+      user_count = 20
+      users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset)
+    end
+    puts '1 +++++++++++++++++++++++++++++++++++++'
+    puts users
+    puts '2 +++++++++++++++++++++++++++++++++++++'
+    # response
+    locals = { 
+      title: 'Gestión de Usuarios del Sistema', 
+      user: 'Usuario demo',
+      error: false,
+      status: status,
+      message: message,
+      users: users,
+      search_name: search_name, 
+      search_email: search_email, 
+      page: page.to_i, 
+      system_id: system_id, 
+      total_pages: (user_count / step).ceil
+    }
+    erb :'system/users', layout: :'layouts/application', locals: locals
+  end
 end

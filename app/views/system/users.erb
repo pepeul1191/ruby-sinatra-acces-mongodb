@@ -1,0 +1,96 @@
+<div class="container my-2">
+  <div class="row">
+    <h2 class="mb-4 subtitle">Gestión de Usuarios del Sistema</h2>
+  </div>
+  <% if status %>
+    <div class="alert alert-<%= status == 'success' ? 'success' : 'danger' %>" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
+  <div class="row align-items-center">
+    <!-- Input text -->
+    <form action="/systems/<%= system_id %>/users" method="GET">
+      <div class="col-auto d-flex align-items-center table-controls">
+        <label for="inputName" class="form-label me-2 mb-0">Nombre:</label>
+        <input type="hidden" name="btn_search" value="1" />
+        <input type="text" style="width: 300px;" id="name" name="name" class="form-control" placeholder="Ingresa nombre" aria-label="Nombre" value="<%= search_name %>">
+        <label for="inputEmail" class="form-label me-2 mb-0">&nbsp;&nbsp;&nbsp;Correo:</label>
+        <input type="text" style="width: 300px;" id="email" name="email" class="form-control" placeholder="Ingresa correo" aria-label="Correo" value="<%= search_email %>">
+        <button class="btn btn-primary">
+          <i class="fa fa-search icon-left-margin" aria-hidden="true"></i> Buscar
+        </button>
+        <a href="/systems/<%= system_id %>/users" class="btn btn-secondary">
+          <i class="fa fa-undo icon-left-margin" aria-hidden="true"></i> Limpiar
+        </a>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col">
+      <table class="table table-bordered table-striped" style="margin-top: 20px;">
+        <thead class="table-dark">
+          <tr>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.each do |user| %>
+            <tr>
+              <td><%= user[:name] %></td>
+              <td><%= user[:email] %></td>
+              <td><%= user[:activated] ? 'Activo' : 'No Activo' %></td>
+              <td>
+                <% if user[:registered] %>
+                  <a href="/roles/<%= user[:id] %>/permissions">" 
+                    class="btn btn-secondary"
+                    <i class="fa fa-list icon-left-margin" aria-hidden="true"></i> Permisos
+                  </a>
+                  <a href="/users/delete/<%= user[:id] %>" class="btn btn-danger">
+                    <i class="fa fa-times" aria-hidden="true"></i> Quitar
+                  </a>
+                <% else %>
+                  <a href="/users/add/<%= user[:id] %>" class="btn btn-success">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar
+                  </a>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <span class="pagination-buttons">
+                <% if page > 1 %> 
+                  <a href="/systems/<%= system_id %>/roles?page=1<%= search_name ? "&name=#{search_name}" : '' %>">
+                    <i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i>
+                  </a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%= page - 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
+                    <i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i>
+                  </a>
+                <% end %>
+
+                <label class="pagination-number"><%= page %> / <%= total_pages %></label>
+
+                <% if page < total_pages %> 
+                  <a href="/systems/<%= system_id %>/roles?page=<%= page + 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
+                    <i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i>
+                  </a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%= total_pages %><%= search_name ? "&name=#{search_name}" : '' %>">
+                    <i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i>
+                  </a>
+                <% end %>
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+</script>

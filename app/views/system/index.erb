@@ -45,7 +45,7 @@
               <td><%= system.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
               <td>
                 <a href="<%= system.repo %>" class="btn btn-secondary" target="_blank"><i class="fa fa-github icon-left-margin" aria-hidden="true"></i>Repositorio</a>
-                <a href="<%= system.repo %>" class="btn btn-secondary"><i class="fa fa-users icon-left-margin" aria-hidden="true"></i>Usuarios</a>
+                <a href="/systems/<%=system.id%>/users" class="btn btn-secondary"><i class="fa fa-users icon-left-margin" aria-hidden="true"></i>Usuarios</a>
                 <a href="/systems/<%=system.id%>/roles" class="btn btn-secondary"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i>Roles y Permisos</a>
                 <a href="/systems/edit/<%=system.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
                 <a href="/systems/delete/<%=system.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
