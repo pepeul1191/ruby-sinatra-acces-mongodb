@@ -161,7 +161,7 @@ class SystemController < ApplicationController
       error: false,
       status: status,
       message: message,
-      users: users,
+      users: users, # array(hash)
       search_name: search_name, 
       search_email: search_email, 
       page: page.to_i, 
@@ -169,5 +169,37 @@ class SystemController < ApplicationController
       total_pages: (user_count / step).ceil
     }
     erb :'system/users', layout: :'layouts/application', locals: locals
+  end
+
+  get '/systems/:system_id/users/:user_id/add' do
+    begin
+      system_id = params[:system_id]
+      user_id = params[:user_id]
+      system = System.find(BSON::ObjectId(system_id))
+      system.push(user_ids: BSON::ObjectId(user_id))
+      redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al agregar el usuario al sistema"
+    end
+  end
+
+  get '/systems/:system_id/users/:user_id/remove' do
+    begin
+      system_id = params[:system_id]
+      user_id = params[:user_id]
+      system = System.find(BSON::ObjectId(system_id))
+      system.pull(user_ids: BSON::ObjectId(user_id))
+      redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al agregar el usuario al sistema"
+    end
   end
 end

@@ -44,15 +44,14 @@
               <td><%= user[:activated] ? 'Activo' : 'No Activo' %></td>
               <td>
                 <% if user[:registered] %>
-                  <a href="/roles/<%= user[:id] %>/permissions">" 
-                    class="btn btn-secondary"
+                  <a href="/roles/<%= user[:id] %>/permissions" class="btn btn-secondary"> 
                     <i class="fa fa-list icon-left-margin" aria-hidden="true"></i> Permisos
                   </a>
-                  <a href="/users/delete/<%= user[:id] %>" class="btn btn-danger">
+                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/remove" class="btn btn-danger">
                     <i class="fa fa-times" aria-hidden="true"></i> Quitar
                   </a>
                 <% else %>
-                  <a href="/users/add/<%= user[:id] %>" class="btn btn-success">
+                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/add" class="btn btn-success">
                     <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                   </a>
                 <% end %>
