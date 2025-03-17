@@ -103,12 +103,54 @@ class UserController < ApplicationController
           reset_key: random_key(20),
           activated: false,
         )
+        send_activation_email(email, activation_key)
         redirect "/users?status=success&message=Usuario creado, id: <b>#{user.id}</b>, se ha enviado un correo de activación a <b>#{email}</b>"
       end
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
       redirect "/users?status=error&message=Ha ocurrido un error en guardar el usuario"
+    end
+  end
+
+  get '/users/edit/:_id' do
+    begin
+      _id = params[:_id]
+      user = User.find(_id)
+      locals = { 
+        title: 'Editar Usuario', 
+        user: 'Usuario demo',
+        subtile: 'Editar Usuario',
+        error: false,
+        logged_user: 'Usuario demo',
+        user: user,
+      }
+      erb :'user/detail', layout: :'layouts/application', locals: locals
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/users?status=error&message=Ha ocurrido un error en editar el usuario"
+    end
+  end
+
+  get '/users/:_id/activated' do
+    begin
+      user = User.find(params[:_id])
+      updated_fields = {}
+      puts '1 +++++++++++++++++++++++++++++++'
+      puts user
+      puts (params[:value] == 'true'? true : false)
+      updated_fields[:activated] = (params[:value] == 'true'? true : false) 
+      puts (updated_fields)
+      puts '2 +++++++++++++++++++++++++++++++'
+      user.update!(updated_fields)
+      redirect "users/edit/#{params[:_id]}?status=success&message=Se cambio el estado de de activación del usuario"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "users/?status=error&message=No se encontró el usuario con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "users/edit/#{params[:_id]}?status=error&message=Ocurrió un error al actualizar la activación del usuario."
     end
   end
 end

@@ -5,6 +5,14 @@ module UserHelper
     return random_chars
   end
 
+  def send_activation_email(email, activation_key)
+    puts('Correo: ' + email + ', Activación: ' + activation_key)
+  end
+
+  def send_reset_email(email, reset_key)
+    puts('Correo: ' + email + ', Reseto: ' + reset_key)
+  end
+
   def encrypt(original_password)
     return original_password
   end

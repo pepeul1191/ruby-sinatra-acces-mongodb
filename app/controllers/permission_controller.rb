@@ -96,9 +96,9 @@ class PermissionController < ApplicationController
       role_id = params[:role_id]
       permission = Permission.find(_id)
       locals = { 
-        title: 'Editar Rol', 
+        title: 'Editar Permiso', 
         user: 'Usuario demo',
-        subtile: 'Editar Rol',
+        subtile: 'Editar Permiso',
         error: false,
         permission: permission,
         role_id: role_id,
