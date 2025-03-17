@@ -69,12 +69,14 @@ class UserController < ApplicationController
   end
 
   get '/users/create' do
+    status = params[:status] || nil
     locals = { 
       title: 'Agregar Usuario', 
       logged_user: 'Usuario demo',
       subtile: 'Agregar Usuario',
       user: nil,
-      error: false
+      error: false,
+      status: status
     }
     erb :'user/detail', layout: :'layouts/application', locals: locals
   end
@@ -116,6 +118,8 @@ class UserController < ApplicationController
   get '/users/edit/:_id' do
     begin
       _id = params[:_id]
+      status = params[:status] || nil
+      message = params[:message] || nil
       user = User.find(_id)
       locals = { 
         title: 'Editar Usuario', 
@@ -124,6 +128,8 @@ class UserController < ApplicationController
         error: false,
         logged_user: 'Usuario demo',
         user: user,
+        status: status,
+        message: message,
       }
       erb :'user/detail', layout: :'layouts/application', locals: locals
     rescue => e
@@ -133,18 +139,35 @@ class UserController < ApplicationController
     end
   end
 
-  get '/users/:_id/activated' do
+  get '/users/:_id/reset-activation' do
     begin
       user = User.find(params[:_id])
-      updated_fields = {}
-      puts '1 +++++++++++++++++++++++++++++++'
-      puts user
-      puts (params[:value] == 'true'? true : false)
-      updated_fields[:activated] = (params[:value] == 'true'? true : false) 
-      puts (updated_fields)
-      puts '2 +++++++++++++++++++++++++++++++'
+      updated_fields = {} 
+      key = random_key(20)
+      updated_fields[:activation_key] = key
+      updated_fields[:updated] = Time.now
       user.update!(updated_fields)
-      redirect "users/edit/#{params[:_id]}?status=success&message=Se cambio el estado de de activación del usuario"
+      send_activation_email(user.email, key)
+      redirect "users/edit/#{params[:_id]}?status=success&message=Se ha enviado un correo de activación del usuario"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "users/?status=error&message=No se encontró el usuario con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "users/edit/#{params[:_id]}?status=error&message=Ocurrió un error al actualizar la activación del usuario."
+    end
+  end
+
+  get '/users/:_id/reset-password' do
+    begin
+      user = User.find(params[:_id])
+      updated_fields = {} 
+      key = random_key(20)
+      updated_fields[:reset_key] = key
+      updated_fields[:updated] = Time.now
+      user.update!(updated_fields)
+      send_reset_email(user.email, key)
+      redirect "users/edit/#{params[:_id]}?status=success&message=Se ha enviado un correo de cambio de contraseña del usuario"
     rescue Mongoid::Errors::DocumentNotFound
       redirect "users/?status=error&message=No se encontró el usuario con el ID especificado"
     rescue => e

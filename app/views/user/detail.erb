@@ -1,5 +1,10 @@
 <div class="container my-2">
   <h2 class="mb-4 subtitle"><%= subtile %></h2>
+  <% if status %>
+    <div class="alert alert-<%=status == 'success' ? 'success' : 'danger'%>" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
   <div class="my-2">
     <form action="<%= user ? "/users/#{user._id}" : "/users" %>" method="POST">
       <div class="row g-2 mb-3">
