@@ -158,6 +158,23 @@ class UserController < ApplicationController
     end
   end
 
+
+  get '/users/:_id/activated' do
+    begin
+      user = User.find(params[:_id])
+      updated_fields = {} 
+      updated_fields[:activated] = (params[:value] == 'true'? true : false) 
+      user.update!(updated_fields)
+      redirect "users/edit/#{params[:_id]}?status=success&message=Se cambio el estado de de activación del usuario"
+    rescue Mongoid::Errors::DocumentNotFound
+      redirect "users/?status=error&message=No se encontró el usuario con el ID especificado"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "users/edit/#{params[:_id]}?status=error&message=Ocurrió un error al actualizar la activación del usuario."
+    end
+  end
+
   get '/users/:_id/reset-password' do
     begin
       user = User.find(params[:_id])
