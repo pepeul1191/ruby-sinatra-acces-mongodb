@@ -22,31 +22,31 @@ class UserController < ApplicationController
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
     if (search_name && !search_name.empty?) || (search_email && !search_email.empty?) and btn_search
-      users_count = User.where(
-        "$or" => [
-          { name: /#{Regexp.escape(search_name)}/i },
-          { email: /#{Regexp.escape(search_email)}/i }
-        ]
-      ).count
-      users = User.where(
-        "$or" => [
-          { name: /#{Regexp.escape(search_name)}/i },
-          { email: /#{Regexp.escape(search_email)}/i }
-        ]
-      ).skip(0).limit(step.to_i)
+      query = {}
+      query["$and"] = []
+      query["$and"] << { name: /#{Regexp.escape(search_name)}/i } if search_name && !search_name.empty?
+      query["$and"] << { email: /#{Regexp.escape(search_email)}/i } if search_email && !search_email.empty?
+      if query["$and"].any?
+        users_count = User.where(query).count
+        users = User.where(query).skip(offset).limit(step.to_i)
+      else
+        # Si no hay búsqueda, puedes devolver todos los usuarios o algo por defecto
+        users_count = User.count
+        users = User.skip(offset).limit(step.to_i)
+      end
     elsif (search_name && !search_name.empty?) || (search_email && !search_email.empty?) and (not btn_search)
-      users_count = User.where(
-        "$or" => [
-          { name: /#{Regexp.escape(search_name)}/i },
-          { email: /#{Regexp.escape(search_email)}/i }
-        ]
-      ).count
-      users = User.where(
-        "$or" => [
-          { name: /#{Regexp.escape(search_name)}/i },
-          { email: /#{Regexp.escape(search_email)}/i }
-        ]
-      ).skip(offset).limit(step.to_i)
+      query = {}
+      query["$and"] = []
+      query["$and"] << { name: /#{Regexp.escape(search_name)}/i } if search_name && !search_name.empty?
+      query["$and"] << { email: /#{Regexp.escape(search_email)}/i } if search_email && !search_email.empty?
+      if query["$and"].any?
+        users_count = User.where(query).count
+        users = User.where(query).skip(offset).limit(step.to_i)
+      else
+        # Si no hay búsqueda, puedes devolver todos los usuarios o algo por defecto
+        users_count = User.count
+        users = User.skip(offset).limit(step.to_i)
+      end
     else
       users_count = User.count
       users = User.skip(offset).limit(step.to_i)
