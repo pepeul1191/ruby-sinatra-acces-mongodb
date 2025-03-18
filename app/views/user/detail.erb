@@ -1,0 +1,63 @@
+<div class="container my-2">
+  <h2 class="mb-4 subtitle"><%= subtile %></h2>
+  <div class="my-2">
+    <form action="<%= user ? "/users/#{user._id}" : "/users" %>" method="POST">
+      <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label for="txtName" class="form-label">Nombre</label>
+          <input type="text" class="form-control" placeholder="Nombre" aria-label="Nombre" id="txtName" name="name" required value="<%= user&.name %>">
+        </div>
+        <div class="col-md-4">
+          <label for="txtEmail" class="form-label">Correo</label>
+          <input type="text" class="form-control" placeholder="Correo" aria-label="Correo" id="txtEmail" name="email" required value="<%= user&.email %>">
+        </div>
+        <div class="col-md-4">
+          <label for="txtPassword" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" placeholder="Contraseña" aria-label="Contraseña" id="txtPassword" name="password" required value="">
+          <div class="feedback" id="txtPasswordFeedback">
+          </div>
+        </div>
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col-md-3">
+          <label for="txtCreated" class="form-label">Fecha de Creación</label>
+          <input type="text" class="form-control" placeholder="Creado" aria-label="Creado" disabled id="txtCreated" value="<%= user&.created&.strftime('%Y-%m-%d %H:%M:%S') %>">
+        </div>
+        <div class="col-md-3">
+          <label for="txtUpdated" class="form-label">Fecha de Edición</label>
+          <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= user&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
+        </div>
+        <div class="col text-end mt-auto">
+          <a class="btn btn-secondary" href="/users"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+          <button class="btn btn-secondary" onclick="generatePassword(event)"><i class="fa fa-random icon-left-margin" aria-hidden="true"></i> Generar Contraseña Segura</button>
+          <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  const generatePassword = (event) => {
+    event.preventDefault();
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    var passLength = 12; 
+    var password = '';
+    for (var i = 0; i < passLength; i++) {
+      var randomIndex = Math.floor(Math.random() * chars.length);
+      password += chars[randomIndex];
+    }
+    document.getElementById('txtPassword').value = password;
+    document.getElementById('txtPasswordFeedback').innerHTML = `La contraseña generada es: <b>${password}</b> &nbsp; <i class="fa fa-files-o i-hover" aria-hidden="true" onclick="copyPassword(event, '${password}')"></i>`;
+    setTimeout(() => {
+      document.getElementById('txtPasswordFeedback').innerHTML = '';
+    }, 10000);
+  }
+
+  const copyPassword = (event, password) => {
+    navigator.clipboard.writeText(password).then(() => {
+      alert('Contraseña copiada al portapapeles!');
+    }).catch((err) => {
+      alert('Error al copiar: ' + err);
+    });
+  }
+</script>

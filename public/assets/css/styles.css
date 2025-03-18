@@ -30,3 +30,8 @@ footer{
 .table-controls > .btn{
   margin-left: 20px;
 }
+
+.i-hover:hover{
+  cursor: pointer;
+  color: #343434;
+}
