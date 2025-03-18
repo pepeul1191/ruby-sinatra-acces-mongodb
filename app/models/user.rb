@@ -18,26 +18,34 @@ class User
     pipeline = [
       {
         "$lookup" => {
-          "from" => "systems",             # Relacionar con systems
-          "localField" => "_id",           # ID de usuario
-          "foreignField" => "user_ids",    # Lista de usuarios en systems
-          "as" => "system_data"            # Campo con la información del sistema
+          "from" => "systems",
+          "localField" => "_id",
+          "foreignField" => "user_ids",
+          "as" => "system_data"
         }
       },
       {
         "$addFields" => {
-          "filtered_systems" => {
-            "$filter" => {
-              "input" => "$system_data",
-              "as" => "sys",
-              "cond" => { "$eq" => ["$$sys._id", system_id] } # Filtrar sistemas por ID
+          "registered" => {
+            "$cond" => {
+              "if" => {
+                "$gt" => [
+                  {
+                    "$size" => {
+                      "$filter" => {
+                        "input" => "$system_data",
+                        "as" => "sys",
+                        "cond" => { "$eq" => ["$$sys._id", BSON::ObjectId(system_id)] }
+                      }
+                    }
+                  }, 
+                  0
+                ]
+              },
+              "then" => true,
+              "else" => false
             }
           }
-        }
-      },
-      {
-        "$addFields" => {
-          "registered" => { "$gt" => [{ "$size" => "$system_data" }, 0] } # Verifica si está registrado en al menos un sistema
         }
       },
       {
@@ -54,20 +62,17 @@ class User
     filters = {}
     filters["name"] = { "$regex" => search_name, "$options" => "i" } if search_name
     filters["email"] = { "$regex" => search_email, "$options" => "i" } if search_email
+    # Si hay filtros, aplicarlos
     pipeline.prepend({ "$match" => filters }) unless filters.empty?
     # Agregar paginación
     pipeline.push(
-      { "$skip" => offset }, # Saltar los primeros "offset" documentos
-      { "$limit" => step }   # Limitar a "step" documentos
+      { "$skip" => offset },
+      { "$limit" => step }
     )
-    # Convertir los resultados en instancias de User
-    docs = []
-    self.collection.aggregate(pipeline).map do |doc|
-      docs.push(doc)
-    end
-    return docs
-  end  
-
+    # Ejecutar la consulta y devolver los resultados
+    self.collection.aggregate(pipeline).to_a
+  end
+  
   def self.count_system_users(system_id, search_name = nil, search_email = nil)
     pipeline = [
       {

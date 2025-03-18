@@ -145,6 +145,9 @@ class SystemController < ApplicationController
       user_count = User.count_system_users(BSON::ObjectId(system_id))
       users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset)
     end
+    puts '1 ++++++++++++++++++++++++++++'
+    puts users
+    puts '2 ++++++++++++++++++++++++++++'
     # href add/remove parameteres
     parameters = []
     parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
@@ -209,6 +212,7 @@ class SystemController < ApplicationController
       page = params[:page] || 1
       # blogic
       system = System.find(BSON::ObjectId(system_id))
+      puts system.to_json
       system.pull(user_ids: BSON::ObjectId(user_id))
       # href add/remove parameteres
       parameters = []
