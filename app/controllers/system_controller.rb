@@ -131,30 +131,30 @@ class SystemController < ApplicationController
     search_name = params[:name] || nil
     search_email = params[:email] || nil
     btn_search = params[:btn_search] || nil
+    registered = params[:registered] == 'true' ? true : params[:registered] == 'false' ? false : nil
     page = params[:page] || 1
     # blogic
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
-    if search_name and btn_search
-      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email)
-      users = User.fetch_system_users(BSON::ObjectId(system_id), step, 0, search_name, search_email)
-    elsif search_name and (not btn_search)
-      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email)
-      users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset, search_name, search_email)
+    if (search_name or search_email or registered != nil) and btn_search
+      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email, registered)
+      users = User.fetch_system_users(BSON::ObjectId(system_id), step, 0, search_name, search_email, registered)
+    elsif (search_name or search_email or (registered != nil)) and (not btn_search)
+      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email, registered)
+      users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset, search_name, search_email, registered)
     else
       user_count = User.count_system_users(BSON::ObjectId(system_id))
       users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset)
     end
-    puts '1 ++++++++++++++++++++++++++++'
-    puts users
-    puts '2 ++++++++++++++++++++++++++++'
     # href add/remove parameteres
     parameters = []
     parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
     parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
     parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+    parameters << "registered=#{registered}" if [true, false].include?(registered)
     parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
     query_string = parameters.any? ? "?#{parameters.join('&')}" : ""
+    # puts query_string
     # response
     locals = { 
       title: 'Gestión de Usuarios del Sistema', 
@@ -165,6 +165,7 @@ class SystemController < ApplicationController
       users: users, # array(hash)
       search_name: search_name, 
       search_email: search_email, 
+      registered: registered,
       page: page.to_i, 
       system_id: system_id, 
       total_pages: (user_count / step).ceil,
@@ -180,7 +181,10 @@ class SystemController < ApplicationController
       search_name = params[:name] || nil
       search_email = params[:email] || nil
       btn_search = params[:btn_search] || nil
+      registered = params[:registered] == 'true' ? true : params[:registered] == 'false' ? false : nil
       page = params[:page] || 1
+      puts 'endpoint'
+      puts registered
       # blogic
       system = System.find(BSON::ObjectId(system_id))
       system.push(user_ids: BSON::ObjectId(user_id))
@@ -189,8 +193,10 @@ class SystemController < ApplicationController
       parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
       parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
       parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+      parameters << "registered=#{registered}" if [true, false].include?(registered)
       parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
       query_string = parameters.any? ? "#{parameters.join('&')}" : ""
+      puts query_string
       # response
       redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema&#{query_string}"
     rescue Mongoid::Errors::DocumentNotFound
@@ -209,16 +215,18 @@ class SystemController < ApplicationController
       search_name = params[:name] || nil
       search_email = params[:email] || nil
       btn_search = params[:btn_search] || nil
+      registered = params[:registered] == 'true' ? true : params[:registered] == 'false' ? false : nil
+      # http://localhost:9292/systems/67885aad2d163a785ef1ade8/users?status=success&message=Se%20ha%20retirado%20el%20usuario%20al%20sistema&btn_search=1&registered=true
       page = params[:page] || 1
       # blogic
       system = System.find(BSON::ObjectId(system_id))
-      puts system.to_json
       system.pull(user_ids: BSON::ObjectId(user_id))
       # href add/remove parameteres
       parameters = []
       parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
       parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
       parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+      parameters << "registered=#{registered}" if [true, false].include?(registered)
       parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
       query_string = parameters.any? ? "#{parameters.join('&')}" : ""
       # response

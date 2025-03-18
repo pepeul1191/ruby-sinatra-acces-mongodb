@@ -95,13 +95,14 @@ class UserController < ApplicationController
       if user_repeted != 0
         redirect "/users?status=error&message=Usuario o correo en uso, no se ha podido crear el nuevo usuario."
       else
+        activation_key = random_key(20)
         user = User.create!(
           name: name,
           password: encrypt(password),
           email: email,
           created: Time.now,
           updated: Time.now, 
-          activation_key: random_key(20),
+          activation_key: activation_key,
           reset_key: random_key(20),
           activated: false,
         )

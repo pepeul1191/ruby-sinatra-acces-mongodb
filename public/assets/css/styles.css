@@ -35,3 +35,11 @@ footer{
   cursor: pointer;
   color: #343434;
 }
+
+.btn-hover-disabled:hover{
+  cursor: pointer;
+}
+
+.btn-hover-disabled{
+  
+}
