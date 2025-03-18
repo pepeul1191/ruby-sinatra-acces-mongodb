@@ -67,4 +67,38 @@ class User
     end
     return docs
   end  
+
+  def self.count_system_users(system_id, search_name = nil, search_email = nil)
+    pipeline = [
+      {
+        "$lookup" => {
+          "from" => "systems",             # Relacionar con systems
+          "localField" => "_id",           # ID de usuario
+          "foreignField" => "user_ids",    # Lista de usuarios en systems
+          "as" => "system_data"            # Campo con la información del sistema
+        }
+      },
+      {
+        "$addFields" => {
+          "filtered_systems" => {
+            "$filter" => {
+              "input" => "$system_data",
+              "as" => "sys",
+              "cond" => { "$eq" => ["$$sys._id", system_id] } # Filtrar sistemas por ID
+            }
+          }
+        }
+      },
+    ]
+    # Construcción de filtros dinámicos
+    filters = {}
+    filters["name"] = { "$regex" => search_name, "$options" => "i" } if search_name
+    filters["email"] = { "$regex" => search_email, "$options" => "i" } if search_email
+    pipeline.prepend({ "$match" => filters }) unless filters.empty?
+    # Agregar conteo
+    pipeline.push({ "$count" => "total_users" })
+    # Ejecutar consulta y devolver el resultado
+    result = self.collection.aggregate(pipeline).first
+    return result ? result["total_users"] : 0
+  end  
 end

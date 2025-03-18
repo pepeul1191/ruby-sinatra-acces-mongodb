@@ -47,11 +47,11 @@
                   <a href="/roles/<%= user[:id] %>/permissions" class="btn btn-secondary"> 
                     <i class="fa fa-list icon-left-margin" aria-hidden="true"></i> Permisos
                   </a>
-                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/remove" class="btn btn-danger">
+                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/remove<%= parameters %>" class="btn btn-danger">
                     <i class="fa fa-times" aria-hidden="true"></i> Quitar
                   </a>
                 <% else %>
-                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/add" class="btn btn-success">
+                  <a href="/systems/<%= system_id %>/users/<%= user[:_id] %>/add<%= parameters %>" class="btn btn-success">
                     <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                   </a>
                 <% end %>
@@ -64,21 +64,19 @@
             <td colspan="5">
               <span class="pagination-buttons">
                 <% if page > 1 %> 
-                  <a href="/systems/<%= system_id %>/roles?page=1<%= search_name ? "&name=#{search_name}" : '' %>">
+                  <a href="/systems/<%= system_id %>/users?page=1<%= search_name ? "&name=#{search_name}" : '' %>">
                     <i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i>
                   </a>
-                  <a href="/systems/<%= system_id %>/roles?page=<%= page - 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
+                  <a href="/systems/<%= system_id %>/users?page=<%= page - 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
                     <i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i>
                   </a>
                 <% end %>
-
                 <label class="pagination-number"><%= page %> / <%= total_pages %></label>
-
                 <% if page < total_pages %> 
-                  <a href="/systems/<%= system_id %>/roles?page=<%= page + 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
+                  <a href="/systems/<%= system_id %>/users?page=<%= page + 1 %><%= search_name ? "&name=#{search_name}" : '' %>">
                     <i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i>
                   </a>
-                  <a href="/systems/<%= system_id %>/roles?page=<%= total_pages %><%= search_name ? "&name=#{search_name}" : '' %>">
+                  <a href="/systems/<%= system_id %>/users?page=<%= total_pages %><%= search_name ? "&name=#{search_name}" : '' %>">
                     <i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i>
                   </a>
                 <% end %>

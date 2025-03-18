@@ -136,24 +136,22 @@ class SystemController < ApplicationController
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
     if search_name and btn_search
-      puts 'if +++++++++++++++++++++++'
-      # user_count = User.count_roles(BSON::ObjectId(system_id), search_name)
-      user_count = 20
+      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email)
       users = User.fetch_system_users(BSON::ObjectId(system_id), step, 0, search_name, search_email)
     elsif search_name and (not btn_search)
-      # user_count = User.count_users(BSON::ObjectId(system_id), search_name)
-      puts 'elefi +++++++++++++++++++++++'
-      user_count = 20
+      user_count = User.count_system_users(BSON::ObjectId(system_id), search_name, search_email)
       users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset, search_name, search_email)
     else
-      puts 'else +++++++++++++++++++++++'
-      # user_count = User.count_users(BSON::ObjectId(system_id))
-      user_count = 20
+      user_count = User.count_system_users(BSON::ObjectId(system_id))
       users = User.fetch_system_users(BSON::ObjectId(system_id), step, offset)
     end
-    puts '1 +++++++++++++++++++++++++++++++++++++'
-    puts users
-    puts '2 +++++++++++++++++++++++++++++++++++++'
+    # href add/remove parameteres
+    parameters = []
+    parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
+    parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
+    parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+    parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
+    query_string = parameters.any? ? "?#{parameters.join('&')}" : ""
     # response
     locals = { 
       title: 'Gestión de Usuarios del Sistema', 
@@ -166,7 +164,8 @@ class SystemController < ApplicationController
       search_email: search_email, 
       page: page.to_i, 
       system_id: system_id, 
-      total_pages: (user_count / step).ceil
+      total_pages: (user_count / step).ceil,
+      parameters: query_string
     }
     erb :'system/users', layout: :'layouts/application', locals: locals
   end
@@ -175,11 +174,24 @@ class SystemController < ApplicationController
     begin
       system_id = params[:system_id]
       user_id = params[:user_id]
+      search_name = params[:name] || nil
+      search_email = params[:email] || nil
+      btn_search = params[:btn_search] || nil
+      page = params[:page] || 1
+      # blogic
       system = System.find(BSON::ObjectId(system_id))
       system.push(user_ids: BSON::ObjectId(user_id))
-      redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema"
+      # href add/remove parameteres
+      parameters = []
+      parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
+      parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
+      parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+      parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
+      query_string = parameters.any? ? "#{parameters.join('&')}" : ""
+      # response
+      redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema&#{query_string}"
     rescue Mongoid::Errors::DocumentNotFound
-      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado"
+      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado&#{query_string}"
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
@@ -191,11 +203,24 @@ class SystemController < ApplicationController
     begin
       system_id = params[:system_id]
       user_id = params[:user_id]
+      search_name = params[:name] || nil
+      search_email = params[:email] || nil
+      btn_search = params[:btn_search] || nil
+      page = params[:page] || 1
+      # blogic
       system = System.find(BSON::ObjectId(system_id))
       system.pull(user_ids: BSON::ObjectId(user_id))
-      redirect "/systems/#{system_id}/users?status=success&message=Se ha agregado el usuario al sistema"
+      # href add/remove parameteres
+      parameters = []
+      parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
+      parameters << "name=#{search_name}" if search_name && !search_name.to_s.empty?
+      parameters << "email=#{search_email}" if search_email && !search_email.to_s.empty?
+      parameters << "page=#{page}" if page && page.to_i > 1 # Solo agrega si `page` es mayor a 1
+      query_string = parameters.any? ? "#{parameters.join('&')}" : ""
+      # response
+      redirect "/systems/#{system_id}/users?status=success&message=Se ha retirado el usuario al sistema&#{query_string}"
     rescue Mongoid::Errors::DocumentNotFound
-      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado"
+      redirect "/systems/#{system_id}/users?status=error&message=No se encontró el sistema con el ID especificado&#{query_string}"
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
