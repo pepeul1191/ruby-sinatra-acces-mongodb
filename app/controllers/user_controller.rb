@@ -1,19 +1,4 @@
 class UserController < ApplicationController
-<<<<<<< HEAD
-  get '/users' do
-    locals = { 
-      title: 'Gestión de Usuarios', 
-      error: false,
-      status: nil,
-      message: 'message',
-      users: [],
-      search_name: 'search_name', 
-      #page: page.to_i, 
-      #total_pages: (systems_count / step).ceil
-    }
-    erb :'user/index', layout: :'layouts/application', locals: locals
-  end
-=======
   include UserHelper
 
   protected_routes = [
@@ -126,5 +111,4 @@ class UserController < ApplicationController
       redirect "/users?status=error&message=Ha ocurrido un error en guardar el usuario"
     end
   end
->>>>>>> 140b32e (listar y crear usurios)
 end
