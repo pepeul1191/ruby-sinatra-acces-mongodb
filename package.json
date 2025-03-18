@@ -8,7 +8,7 @@
   },
   "scripts": {
     "bower-install": "bower install",
-    "dev": "rake server:development"
+    "server": "rake server:development"
   },
   "keywords": [],
   "author": "",

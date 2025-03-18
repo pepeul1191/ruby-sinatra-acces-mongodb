@@ -7,6 +7,7 @@ class System
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
   field :role_ids, type: Array, default: [], as: :role_ids
+  field :user_ids, type: Array, default: [], as: :user_ids
 
   def self.fetch_roles(_id, step, offset, search_name = nil) # (BSON::ObjectId, float, int, str) -> Array[Role]
     pipeline = [

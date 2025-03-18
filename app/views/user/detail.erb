@@ -1,5 +1,10 @@
 <div class="container my-2">
   <h2 class="mb-4 subtitle"><%= subtile %></h2>
+  <% if status %>
+    <div class="alert alert-<%=status == 'success' ? 'success' : 'danger'%>" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
   <div class="my-2">
     <form action="<%= user ? "/users/#{user._id}" : "/users" %>" method="POST">
       <div class="row g-2 mb-3">
@@ -13,26 +18,53 @@
         </div>
         <div class="col-md-4">
           <label for="txtPassword" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" placeholder="Contraseña" aria-label="Contraseña" id="txtPassword" name="password" required value="">
+          <input type="password" class="form-control" placeholder="Contraseña" aria-label="Contraseña" id="txtPassword" name="password" <%= user ? '' : 'required' %> value="">
           <div class="feedback" id="txtPasswordFeedback">
           </div>
         </div>
       </div>
-      <div class="row g-2 mb-3">
-        <div class="col-md-3">
-          <label for="txtCreated" class="form-label">Fecha de Creación</label>
-          <input type="text" class="form-control" placeholder="Creado" aria-label="Creado" disabled id="txtCreated" value="<%= user&.created&.strftime('%Y-%m-%d %H:%M:%S') %>">
+      <%if user&.id == nil %>
+        <div class="row g-2 mb-3">
+          <div class="col-md-3">
+            <label for="txtCreated" class="form-label">Fecha de Creación</label>
+            <input type="text" class="form-control" placeholder="Creado" aria-label="Creado" disabled id="txtCreated" value="<%= user&.created&.strftime('%Y-%m-%d %H:%M:%S') %>">
+          </div>
+          <div class="col-md-3">
+            <label for="txtUpdated" class="form-label">Fecha de Edición</label>
+            <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= user&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
+          </div>
+          <div class="col text-end mt-auto">
+            <a class="btn btn-secondary" href="/users"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+            <button class="btn btn-secondary" onclick="generatePassword(event)"><i class="fa fa-random icon-left-margin" aria-hidden="true"></i> Generar Contraseña Segura</button>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
+          </div>
         </div>
-        <div class="col-md-3">
-          <label for="txtUpdated" class="form-label">Fecha de Edición</label>
-          <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= user&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
+      <% else %>
+        <div class="row g-2 mb-3">
+          <div class="col-md-3">
+            <label for="txtCreated" class="form-label">Fecha de Creación</label>
+            <input type="text" class="form-control" placeholder="Creado" aria-label="Creado" disabled id="txtCreated" value="<%= user&.created&.strftime('%Y-%m-%d %H:%M:%S') %>">
+          </div>
+          <div class="col-md-3">
+            <label for="txtUpdated" class="form-label">Fecha de Edición</label>
+            <input type="text" class="form-control" placeholder="Editado" aria-label="Editado" disabled id="txtUpdated" value="<%= user&.updated&.strftime('%Y-%m-%d %H:%M:%S') %>">
+          </div>
+          <div class="col-md-3">
+            <label for="txtActivated" class="form-label">Estado de Activación</label>
+            <input type="text" class="form-control" placeholder="Activado" aria-label="Activado" disabled id="txtActivated" value="<%= user.activated ? 'Activo' : 'No Activo' %>">
+          </div>
         </div>
-        <div class="col text-end mt-auto">
-          <a class="btn btn-secondary" href="/users"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
-          <button class="btn btn-secondary" onclick="generatePassword(event)"><i class="fa fa-random icon-left-margin" aria-hidden="true"></i> Generar Contraseña Segura</button>
-          <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
+        <div class="row g-2 mb-2 mt-4">
+          <div class="col text-end mt-auto">
+            <a class="btn btn-secondary" href="/users"><i class="fa fa-arrow-left icon-left-margin" aria-hidden="true"></i> Retroceder</a>
+            <a class="btn btn-secondary" href="/users/<%= user._id %>/reset-activation"><i class="fa fa-rotate-left icon-left-margin" aria-hidden="true"></i> Resetear Activación</a>
+            <a class="btn btn-secondary" href="/users/<%= user._id %>/reset-password"><i class="fa fa-rotate-left icon-left-margin" aria-hidden="true"></i> Resetear Contraseña</a>
+            <button class="btn btn-secondary" onclick="generatePassword(event)"><i class="fa fa-random icon-left-margin" aria-hidden="true"></i> Generar Contraseña Segura</button>
+            <a class="btn btn-info" href="/users/<%= user._id %>/activated?value=<%= user.activated ? 'false' : 'true' %>"><i class="fa fa-rotate-left icon-left-margin" aria-hidden="true"></i> <%= user.activated ? 'Desactivar' : 'Activar' %> Cuenta</a>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-check icon-left-margin" aria-hidden="true"></i> Grabar</button>
+          </div>
         </div>
-      </div>
+      <% end %>
     </form>
   </div>
 </div>

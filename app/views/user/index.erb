@@ -9,13 +9,6 @@
   <% end %>
   <div class="row align-items-center">
     <!-- Input text -->
-<<<<<<< HEAD
-    <form action="<%= search_name ? "/users?name=#{CGI.escape(search_name)}" : "/users" %>" method="GET">
-      <div class="col-auto d-flex align-items-center table-controls">
-        <label for="inputName" class="form-label me-2 mb-0">Nombre:</label>
-        <input type="hidden" name="btn_search" value="1" />
-        <input type="text" style="width: 300px;" id="name" name="name" class="form-control" placeholder="Ingresa un nombre" aria-label="Nombre" value="<%= search_name %>">
-=======
     <form action="<%= search_name || search_email ? "/users?name={search_name}&email={search_email}" : "/users" %>" method="GET">
       <div class="col-auto d-flex align-items-center table-controls">
         <label for="inputName" class="form-label me-2 mb-0">Nombre:</label>
@@ -23,74 +16,18 @@
         <input type="text" style="width: 300px;" id="name" name="name" class="form-control" placeholder="Ingresa nombre" aria-label="Nombre" value="<%= search_name %>">
         <label for="inputName" class="form-label me-2 mb-0">&nbsp;&nbsp;&nbsp;Correo:</label>
         <input type="text" style="width: 300px;" id="email" name="email" class="form-control" placeholder="Ingresa correo" aria-label="Correo" value="<%= search_email %>">
->>>>>>> 140b32e (listar y crear usurios)
         <button class="btn btn-primary">
           <i class="fa fa-search icon-left-margin" aria-hidden="true"></i> Buscar
         </button>
         <a href="/users" class="btn btn-secondary">
           <i class="fa fa-undo icon-left-margin" aria-hidden="true"></i> Limpiar
         </a>
-<<<<<<< HEAD
-        <a href="/users/create" class="btn btn-success">
-          <i class="fa fa-plus icon-left-margin" aria-hidden="true"></i> Agregar Usuario
-=======
           <a href="/users/create" class="btn btn-success">
           <i class="fa fa-plus icon-left-margin" aria-hidden="true"></i> Agregar Registro
->>>>>>> 140b32e (listar y crear usurios)
         </a>
       </div>
     </form>
   </div>
-<<<<<<< HEAD
-  <% if users.length() > 0  %>
-    <div class="row">
-      <div class="col">
-        <table class="table table-bordered table-striped" style="margin-top: 20px;">
-          <thead class="table-dark">
-            <tr>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Creado</th>
-              <th>Actualizado</th>
-              <th>Operaciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% roles.each_with_index do |role, index| %>
-              <tr>
-                <td><%= role.name %></td>
-                <td><%= role.description %></td>
-                <td><%= role.created.strftime('%Y-%m-%d %H:%M:%S') %></td>
-                <td><%= role.updated&.strftime('%Y-%m-%d %H:%M:%S') || 'No actualizado' %></td>
-                <td>
-                  <a href="/systems/<%= system_id %>/roles/edit/<%=role.id%>" class="btn btn-secondary"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Editar</a>
-                  <a href="/roles/delete/<%=role.id%>" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>Eliminar</a>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="5">
-                <span class="pagination-buttons">
-                  <% if page != 1 %> 
-                    <a href="/systems/<%= system_id %>/roles?page=1<%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i></a>
-                    <a href="/systems/<%= system_id %>/roles?page=<%=page-1%><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i></a>
-                  <% end %>
-                  <label class="pagination-number"><%= page %> / <%= total_pages %></label>
-                  <% if page != total_pages %> 
-                    <a href="/systems/<%= system_id %>/roles?page=<%= page+1 %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i></a>
-                    <a href="/systems/<%= system_id %>/roles?page=<%= total_pages %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i></a>
-                  <% end %>
-                </span>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  <% end %>
-=======
   <div class="row">
     <div class="col">
       <table class="table table-bordered table-striped" style="margin-top: 20px;">
@@ -139,5 +76,4 @@
       </table>
     </div>
   </div>
->>>>>>> 140b32e (listar y crear usurios)
 </div>

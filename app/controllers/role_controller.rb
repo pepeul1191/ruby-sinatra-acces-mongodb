@@ -50,12 +50,7 @@ class RoleController < ApplicationController
       subtile: 'Agregar Rol a Sistema',
       system_id: params[:system_id], 
       role: nil,
-      error: false,
-      page: nil,
-      search_name: nil, 
-      total_pages: nil,
-      permissions: nil,
-      permissions_count: nil,
+      error: false
     }
     erb :'role/detail', layout: :'layouts/application', locals: locals
   end
@@ -97,42 +92,22 @@ class RoleController < ApplicationController
 
   get '/systems/:system_id/roles/edit/:_id' do
     begin
-      # request
-      system_id = params[:system_id]
-      message = params[:message] || nil
-      status = params[:status] || nil
-      search_name = params[:name] || nil
       _id = params[:_id]
       system_id = params[:system_id]
-      page = params[:page] || 1
       role = Role.find(_id)
-      # blogic
-      step = 10.0
-      offset = (page.to_i - 1) * step.to_i
-      permissions_count = Role.count_permissions(BSON::ObjectId(_id), search_name)
-      permissions = Role.fetch_permissions(BSON::ObjectId(_id), step, offset, search_name)
-      # response
       locals = { 
         title: 'Editar Rol', 
         user: 'Usuario demo',
         subtile: 'Editar Rol',
         error: false,
         role: role,
-        page: page.to_i, 
-        message: message, 
-        search_name: search_name, 
-        total_pages: (permissions_count / step).ceil,
         system_id: system_id,
-        status: status, 
-        role_id: _id, 
-        permissions: permissions,
-        permissions_count: permissions_count,
       }
       erb :'role/detail', layout: :'layouts/application', locals: locals
     rescue => e
       puts "Error: #{e.message}"
       puts e.backtrace
-      redirect "/systems/#{system_id}/roles?status=error&message=Ha ocurrido un error en editar el sistema: #{e.message}"
+      redirect "/systems/#{system_id}/roles?status=error&message=Ha ocurrido un error en editar el sistema"
     end
   end
 

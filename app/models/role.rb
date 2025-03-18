@@ -45,9 +45,9 @@ class Role
       { "$skip" => offset },                # Saltar los primeros 'offset' documentos
       { "$limit" => step }                  # Limitar a 'step' documentos
     )
-    # Convertir los resultados en instancias de Permission
+    # Convertir los resultados en instancias de Role
     self.collection.aggregate(pipeline).map do |doc|
-      Permission.new(
+      Role.new(
         id: doc["_id"],
         name: doc["name"],
         description: doc["description"],
