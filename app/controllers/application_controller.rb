@@ -30,11 +30,17 @@ class ApplicationController < Sinatra::Base
   end
 
   not_found do
-    extensions = ['css', 'js', 'png', ]
-    path = request.path.split('.')
-    if !extensions.include? path[path.length - 1]
+    # Lista de extensiones de archivos estáticos que no deben devolver un 404 con un ERB
+    extensions = ['css', 'js', 'png', 'jpg', 'gif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'eot', 'mp4', 'webm']
+    # Obtener la extensión del archivo de la URL
+    ext = File.extname(request.path).delete_prefix('.')
+    # Si la extensión no está en la lista, renderiza la página 404
+    unless extensions.include?(ext)
       status 404
-      'Recurso no encontrado'
+      locals = { 
+        title: 'Recurso no encontrado', 
+      }
+      erb :'application/not_found', layout: :'layouts/blank', locals: locals
     end
   end
 
@@ -42,7 +48,7 @@ class ApplicationController < Sinatra::Base
     locals = { 
       title: 'Gestión de Accesos', 
     }
-    erb :'home/index', layout: :'layouts/application', locals: locals
+    erb :'application/home', layout: :'layouts/application', locals: locals
   end
 
   get '/sign-out' do
