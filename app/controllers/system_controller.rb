@@ -183,8 +183,6 @@ class SystemController < ApplicationController
       btn_search = params[:btn_search] || nil
       registered = params[:registered] == 'true' ? true : params[:registered] == 'false' ? false : nil
       page = params[:page] || 1
-      puts 'endpoint'
-      puts registered
       # blogic
       system = System.find(BSON::ObjectId(system_id))
       system.push(user_ids: BSON::ObjectId(user_id))
@@ -238,5 +236,9 @@ class SystemController < ApplicationController
       puts e.backtrace
       redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al agregar el usuario al sistema"
     end
+  end
+
+  get '/systems/:system_id/users/:user_id/roles' do
+    'hola'
   end
 end
