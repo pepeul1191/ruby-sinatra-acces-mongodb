@@ -186,6 +186,14 @@ class SystemController < ApplicationController
       # blogic
       system = System.find(BSON::ObjectId(system_id))
       system.push(user_ids: BSON::ObjectId(user_id))
+      # update user adding system's SystemPermission
+      system_permission = SystemPermission.new(
+        system_id: BSON::ObjectId(system_id),
+        permission_ids: []
+      )
+      user = User.find(user_id)
+      user.permissions << system_permission
+      user.save!
       # href add/remove parameteres
       parameters = []
       parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
@@ -208,8 +216,8 @@ class SystemController < ApplicationController
 
   get '/systems/:system_id/users/:user_id/remove' do
     begin
-      system_id = params[:system_id]
-      user_id = params[:user_id]
+      system_id = BSON::ObjectId(params[:system_id])
+      user_id = BSON::ObjectId(params[:user_id])
       search_name = params[:name] || nil
       search_email = params[:email] || nil
       btn_search = params[:btn_search] || nil
@@ -217,8 +225,13 @@ class SystemController < ApplicationController
       # http://localhost:9292/systems/67885aad2d163a785ef1ade8/users?status=success&message=Se%20ha%20retirado%20el%20usuario%20al%20sistema&btn_search=1&registered=true
       page = params[:page] || 1
       # blogic
-      system = System.find(BSON::ObjectId(system_id))
-      system.pull(user_ids: BSON::ObjectId(user_id))
+      system = System.find(system_id)
+      system.pull(user_ids: user_id)
+      # update user removing system's SystemPermission
+      user = User.find(user_id)
+      updated_permissions = user.permissions.reject { |perm| perm.system_id == system_id }
+      updated_permissions = [] if updated_permissions.nil? || updated_permissions.empty?
+      user.set(permissions: updated_permissions, updated: Time.now)
       # href add/remove parameteres
       parameters = []
       parameters << "btn_search=#{btn_search}" if btn_search && !btn_search.to_s.empty?
