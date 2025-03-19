@@ -104,6 +104,7 @@ class UserController < ApplicationController
           updated: Time.now, 
           activation_key: activation_key,
           reset_key: random_key(20),
+          permissions: [],
           activated: false,
         )
         send_activation_email(email, activation_key)

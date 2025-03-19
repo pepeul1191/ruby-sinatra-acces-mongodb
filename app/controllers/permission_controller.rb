@@ -129,5 +129,4 @@ class PermissionController < ApplicationController
       redirect "/roles/#{role_id}/permissions?status=error&message=Ocurrió un error al actualizar el permiso"
     end
   end
-  
 end

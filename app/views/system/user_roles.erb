@@ -1,0 +1,70 @@
+<div class="container my-2">
+  <div class="row">
+    <h2 class="mb-4 subtitle">Gestión de Roles del Sistema</h2>
+  </div>
+  <% if status %>
+    <div class="alert alert-<%=status == 'success' ? 'success' : 'danger'%>" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
+  <div class="row align-items-center">
+    <!-- Input text -->
+    <form action="<%= search_name ? "/systems/#{system_id}/roles?name=#{CGI.escape(search_name)}" : "/systems/#{system_id}/roles" %>" method="GET">
+      <div class="col-auto d-flex align-items-center table-controls">
+        <label for="inputName" class="form-label me-2 mb-0">Nombre:</label>
+        <input type="hidden" name="btn_search" value="1" />
+        <input type="text" style="width: 300px;" id="name" name="name" class="form-control" placeholder="Ingresa un nombre" aria-label="Nombre" value="<%= search_name %>">
+        <button class="btn btn-primary">
+          <i class="fa fa-search icon-left-margin" aria-hidden="true"></i> Buscar
+        </button>
+        <a href="/systems/<%= system_id %>/roles" class="btn btn-secondary">
+          <i class="fa fa-undo icon-left-margin" aria-hidden="true"></i> Limpiar
+        </a>
+        <a href="/systems/<%= system_id %>/roles/create" class="btn btn-success">
+          <i class="fa fa-plus icon-left-margin" aria-hidden="true"></i> Agregar Registro
+        </a>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col">
+      <table class="table table-bordered table-striped" style="margin-top: 20px;">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% roles.each_with_index do |role, index| %>
+            <tr>
+              <td><%= role.name %></td>
+              <td><%= role.description %></td>
+              <td>
+                <a href="/systems/<%=system_id%>/users/<%=user_id%>/roles/<%=role._id%>" class="btn btn-secondary"><i class="fa fa-list icon-left-margin" aria-hidden="true"></i>Permisos</a>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <span class="pagination-buttons">
+                <% if page != 1 %> 
+                  <a href="/systems/<%= system_id %>/roles?page=1<%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-left footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%=page-1%><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-left footer-icon pagination-btn" aria-hidden="true"></i></a>
+                <% end %>
+                <label class="pagination-number"><%= page %> / <%= total_pages %></label>
+                <% if page != total_pages %> 
+                  <a href="/systems/<%= system_id %>/roles?page=<%= page+1 %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-right footer-icon pagination-btn" aria-hidden="true"></i></a>
+                  <a href="/systems/<%= system_id %>/roles?page=<%= total_pages %><%= search_name ? '&name=' + search_name : ''  %>"><i class="fa fa-angle-double-right footer-icon pagination-btn" aria-hidden="true"></i></a>
+                <% end %>
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

@@ -239,6 +239,118 @@ class SystemController < ApplicationController
   end
 
   get '/systems/:system_id/users/:user_id/roles' do
-    'hola'
+    # request
+    system_id = params[:system_id]
+    user_id = params[:user_id]
+    message = params[:message] || nil
+    status = params[:status] || nil
+    search_name = params[:name] || nil
+    btn_search = params[:btn_search] || nil
+    page = params[:page] || 1
+    # blogic
+    step = 10.0
+    offset = (page.to_i - 1) * step.to_i
+    if search_name and btn_search
+      roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
+      roles = System.fetch_roles(BSON::ObjectId(system_id), step, 0, search_name)
+    elsif search_name and (not btn_search)
+      roles_count = System.count_roles(BSON::ObjectId(system_id), search_name)
+      roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset, search_name)
+    else
+      roles_count = System.count_roles(BSON::ObjectId(system_id))
+      roles = System.fetch_roles(BSON::ObjectId(system_id), step, offset)
+    end
+    # response
+    locals = { 
+      title: 'Gestión de Roles del Usuario', 
+      user: 'Usuario demo',
+      error: false,
+      status: status,
+      message: message,
+      roles: roles,
+      search_name: search_name, 
+      user_id: user_id,
+      page: page.to_i, 
+      system_id: system_id, 
+      total_pages: (roles_count / step).ceil
+    }
+    erb :'system/user_roles', layout: :'layouts/application', locals: locals
+  end
+
+  get '/systems/:system_id/users/:user_id/roles/:role_id' do
+    # request
+    role_id = params[:role_id]
+    system_id = params[:system_id]
+    user_id = params[:user_id]
+    message = params[:message] || nil
+    status = params[:status] || nil
+    search_name = params[:name] || nil
+    btn_search = params[:btn_search] || nil
+    page = params[:page] || 1
+    # blogic
+    step = 10.0
+    offset = (page.to_i - 1) * step.to_i
+    if search_name and btn_search
+      permissions_count = Role.count_permissions(BSON::ObjectId(role_id), search_name)
+      permissions = Role.fetch_permissions(BSON::ObjectId(role_id), step, 0, search_name)
+    elsif search_name and (not btn_search)
+      permissions_count = Role.count_permissions(BSON::ObjectId(role_id), search_name)
+      permissions = Role.fetch_permissions(BSON::ObjectId(role_id), step, offset, search_name)
+    else
+      permissions_count = Role.count_permissions(BSON::ObjectId(role_id))
+      permissions = Role.fetch_permissions(BSON::ObjectId(role_id), step, offset)
+    end
+    # response
+    locals = { 
+      title: 'Gestión de Permisos del Rol', 
+      user: 'Usuario demo',
+      error: false,
+      status: status,
+      message: message,
+      permissions: permissions,
+      search_name: search_name, 
+      page: page.to_i, 
+      user_id: user_id,
+      role_id: role_id, 
+      system_id: system_id,
+      total_pages: (permissions_count / step).ceil
+    }
+    erb :'system/user_permissions', layout: :'layouts/application', locals: locals
+  end
+
+  get '/systems/:system_id/users/:user_id/roles/:role_id/add-permissions' do
+    role_id = BSON::ObjectId(params[:role_id])
+    system_id = BSON::ObjectId(params[:system_id])
+    user_id = BSON::ObjectId(params[:user_id])
+    role = Role.find(role_id)
+    system_permission = SystemPermission.new(
+      system_id: system_id,
+      permission_ids: role.permission_ids
+    )
+    # Encontrar el usuario y agregar system_permission a la lista de permisos
+    user = User.find(user_id)
+    user.permissions << system_permission
+    # Guardar el usuario con el nuevo permiso embebido
+    user.save!
+    "Permisos agregados al usuario correctamente"
+  end
+
+  get '/systems/:system_id/users/:user_id/roles/:role_id/remove-permissions' do
+    role_id = BSON::ObjectId(params[:role_id])
+    system_id = BSON::ObjectId(params[:system_id])
+    user_id = BSON::ObjectId(params[:user_id])
+    # Obtener el rol y el usuario
+    role = Role.find(role_id)
+    user = User.find(user_id)
+    # Si el usuario tiene permisos en este sistema
+    user.permissions.each do |perm|
+      if perm.system_id == system_id
+        # Filtrar los `permission_ids`, eliminando los que están en `role.permission_ids`
+        perm.permission_ids -= role.permission_ids
+      end
+    end
+    # Guardar cambios en el usuario
+    user.save!
+    "Permisos eliminados al usuario correctamente"
   end
 end

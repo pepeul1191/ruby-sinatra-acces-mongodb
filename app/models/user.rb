@@ -8,11 +8,12 @@ class User
   field :reset_key, type: String
   field :email, type: String
   field :activated, type: Boolean
-  # field :permission_ids, type: Array, default: [], as: :permission_ids
   # field :roles_ids, type: Array, default: [], as: :roles_ids
   # field :tokens, type: Array, default: [], as: :tokens
   field :created, type: DateTime, default: -> { Time.now }
   field :updated, type: DateTime
+  
+  embeds_many :permissions, class_name: "SystemPermission"
 
   def self.fetch_system_users(system_id, step, offset, search_name = nil, search_email = nil, registered = nil)
     pipeline = [
