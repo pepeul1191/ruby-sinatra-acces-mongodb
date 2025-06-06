@@ -399,4 +399,66 @@ class SystemController < ApplicationController
       redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al quitar todos los permisos del rol al usuario"
     end    
   end
+
+  get '/systems/:system_id/users/:user_id/roles/:role_id/permissions/add/:permission_id' do
+    begin
+      permission_id = BSON::ObjectId(params[:permission_id])
+      system_id = BSON::ObjectId(params[:system_id])
+      user_id = BSON::ObjectId(params[:user_id])
+      role_id = BSON::ObjectId(params[:role_id])
+      user = User.find(user_id)
+      status = 'success'
+      message = ''
+      # Verificar si ya existe un permiso con el mismo `system_id`
+      existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
+      if !existing_permission.permission_ids.include?(permission_id)
+        existing_permission.permission_ids.push(permission_id) # Agregar nuevo permiso
+        # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
+        user.permissions = user.permissions.map(&:dup) 
+        # 🔹 Usar `set` para forzar la actualización en la base de datos
+        user.set(permissions: user.permissions)
+        message = "Permiso del rol agregado al usuario correctamente"
+      else
+        status = 'error'
+        message = "Perimiso ya agregado"
+      end
+      # response
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=#{status}&message=#{message}"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=error&message=Ocurrió un error al agregar permiso del rol al usuario"
+    end
+  end
+
+  get '/systems/:system_id/users/:user_id/roles/:role_id/permissions/delete/:permission_id' do
+    begin
+      permission_id = BSON::ObjectId(params[:permission_id])
+      system_id = BSON::ObjectId(params[:system_id])
+      user_id = BSON::ObjectId(params[:user_id])
+      role_id = BSON::ObjectId(params[:role_id])
+      user = User.find(user_id)
+      status = 'success'
+      message = ''
+      # Verificar si ya existe un permiso con el mismo `system_id`
+      existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
+      if existing_permission.permission_ids.include?(permission_id)
+        existing_permission.permission_ids.delete(permission_id) # Agregar nuevo permiso
+        # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
+        user.permissions = user.permissions.map(&:dup) 
+        # 🔹 Usar `set` para forzar la actualización en la base de datos
+        user.set(permissions: user.permissions)
+        message = "Permiso del rol eliminado al usuario correctamente"
+      else
+        status = 'error'
+        message = "Perimiso no asociado al usuario"
+      end
+      # response
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=#{status}&message=#{message}"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=error&message=Ocurrió un error al quitar permiso del rol al usuario"
+    end
+  end
 end
