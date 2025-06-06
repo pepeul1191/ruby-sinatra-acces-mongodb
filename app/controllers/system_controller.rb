@@ -332,50 +332,71 @@ class SystemController < ApplicationController
   end
 
   get '/systems/:system_id/users/:user_id/roles/:role_id/add-permissions' do
-    role_id = BSON::ObjectId(params[:role_id])
-    system_id = BSON::ObjectId(params[:system_id])
-    user_id = BSON::ObjectId(params[:user_id])
-    role = Role.find(role_id)
-    user = User.find(user_id)
-    # Verificar si ya existe un permiso con el mismo `system_id`
-    existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
-    if existing_permission
-      # 🔹 Agregar solo los `permission_ids` que NO estén repetidos
-      new_permissions = role.permission_ids - existing_permission.permission_ids
-      unless new_permissions.empty?
-        existing_permission.permission_ids += new_permissions # Agregar los nuevos
-        # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
-        user.permissions = user.permissions.map(&:dup) 
-        # 🔹 Usar `set` para forzar la actualización en la base de datos
-        user.set(permissions: user.permissions)
+    begin
+      role_id = BSON::ObjectId(params[:role_id])
+      system_id = BSON::ObjectId(params[:system_id])
+      user_id = BSON::ObjectId(params[:user_id])
+      role = Role.find(role_id)
+      user = User.find(user_id)
+      status = 'success'
+      message = ''
+      # Verificar si ya existe un permiso con el mismo `system_id`
+      existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
+      if existing_permission
+        # 🔹 Agregar solo los `permission_ids` que NO estén repetidos
+        new_permissions = role.permission_ids - existing_permission.permission_ids
+        unless new_permissions.empty?
+          existing_permission.permission_ids += new_permissions # Agregar los nuevos
+          # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
+          user.permissions = user.permissions.map(&:dup) 
+          # 🔹 Usar `set` para forzar la actualización en la base de datos
+          user.set(permissions: user.permissions)
+        end
+        message = "Permisos del rol agregados al usuario correctamente"
+      else
+        message = "Error, usuario no registrado a sistema"
       end
-    else
-      "Error, usuario no registrado a sistema"
+      # response
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=#{status}&message=#{message}"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al agregar todos los permisos del rol al usuario"
     end
-    "Permisos agregados al usuario correctamente"
   end
 
   get '/systems/:system_id/users/:user_id/roles/:role_id/remove-permissions' do
-    role_id = BSON::ObjectId(params[:role_id])
-    system_id = BSON::ObjectId(params[:system_id])
-    user_id = BSON::ObjectId(params[:user_id])
-    role = Role.find(role_id)
-    user = User.find(user_id)
-    # Verificar si ya existe un permiso con el mismo `system_id`
-    existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
-    if existing_permission
-      # 🔹 Eliminar solo los `permission_ids` que están en `role.permission_ids`
-      removed_permissions = existing_permission.permission_ids & role.permission_ids
-      unless removed_permissions.empty?
-        existing_permission.permission_ids -= removed_permissions # Quitar los permisos
-        # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
-        user.permissions = user.permissions.map(&:dup) 
-        # 🔹 Usar `set` para forzar la actualización en la base de datos
-        user.set(permissions: user.permissions)
+    begin
+      role_id = BSON::ObjectId(params[:role_id])
+      system_id = BSON::ObjectId(params[:system_id])
+      user_id = BSON::ObjectId(params[:user_id])
+      role = Role.find(role_id)
+      user = User.find(user_id)
+      status = 'success'
+      message = ''
+      # Verificar si ya existe un permiso con el mismo `system_id`
+      existing_permission = user.permissions.find { |perm| perm.system_id == system_id }
+      if existing_permission
+        # 🔹 Eliminar solo los `permission_ids` que están en `role.permission_ids`
+        removed_permissions = existing_permission.permission_ids & role.permission_ids
+        unless removed_permissions.empty?
+          existing_permission.permission_ids -= removed_permissions # Quitar los permisos
+          # 🔹 IMPORTANTE: Reasignar `permissions` para que Mongoid detecte el cambio
+          user.permissions = user.permissions.map(&:dup) 
+          # 🔹 Usar `set` para forzar la actualización en la base de datos
+          user.set(permissions: user.permissions)
+        end
+        message = "Permisos del rol eliminados del usuario correctamente"
+      else
+        message = "Error, usuario no registrado a sistema"
+        status = 'error'
       end
-    else
-      "Error, usuario no registrado a sistema"
-    end
-    "Permisos eliminados del usuario correctamente"
+      # response
+      redirect "/systems/#{system_id}/users/#{user_id}/roles/#{role_id}?status=#{status}&message=#{message}"
+    rescue => e
+      puts "Error: #{e.message}"
+      puts e.backtrace
+      redirect "/systems/#{system_id}/users?status=error&message=Ocurrió un error al quitar todos los permisos del rol al usuario"
+    end    
   end
 end
