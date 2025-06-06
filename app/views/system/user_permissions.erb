@@ -45,8 +45,11 @@
               <td><%= permission.name %></td>
               <td><%= permission.description %></td>
               <td>
-                <a href="/systems/<%= system_id %>/users/<%= user_id %>/roles/<%=role_id%>/permissions/add/<%=permission.id%>" class="btn btn-success"><i class="fa fa-plus icon-left-margin" aria-hidden="true"></i>Agregar</a>
+              <% if user_permission_ids.include?(permission.id) %>
                 <a href="/systems/<%= system_id %>/users/<%= user_id %>/roles/<%=role_id%>/permissions/delete/<%=permission.id%>" class="btn btn-danger"><i class="fa fa-pencil icon-left-margin" aria-hidden="true"></i>Eliminar</a>
+              <% else %>
+                <a href="/systems/<%= system_id %>/users/<%= user_id %>/roles/<%=role_id%>/permissions/add/<%=permission.id%>" class="btn btn-success"><i class="fa fa-plus icon-left-margin" aria-hidden="true"></i>Agregar</a>
+              <% end %>
               </td>
             </tr>
           <% end %>

@@ -301,6 +301,14 @@ class SystemController < ApplicationController
     btn_search = params[:btn_search] || nil
     page = params[:page] || 1
     # blogic
+    # traer permissos existentes
+    user = User.find(BSON::ObjectId(user_id))
+    existing_permission = user.permissions.find { |perm| perm.system_id == BSON::ObjectId(system_id) }
+    user_permission_ids = []
+    if existing_permission
+      user_permission_ids = existing_permission.permission_ids
+    end
+    # tabla
     step = 10.0
     offset = (page.to_i - 1) * step.to_i
     if search_name and btn_search
@@ -326,6 +334,7 @@ class SystemController < ApplicationController
       user_id: user_id,
       role_id: role_id, 
       system_id: system_id,
+      user_permission_ids: user_permission_ids,
       total_pages: (permissions_count / step).ceil
     }
     erb :'system/user_permissions', layout: :'layouts/application', locals: locals
