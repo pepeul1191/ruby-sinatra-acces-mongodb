@@ -92,4 +92,22 @@ class Role
     result = self.collection.aggregate(pipeline).first
     result ? result["total_permissions"] : 1
   end
+
+  def as_json(options = {})
+    attrs = {
+      _id: id.to_s,
+      name: name,
+      description: description,
+      created: created,
+      updated: updated,
+    }
+
+    if options[:only]
+      attrs.slice(*options[:only])
+    elsif options[:except]
+      attrs.except(*options[:except])
+    else
+      attrs
+    end
+  end
 end

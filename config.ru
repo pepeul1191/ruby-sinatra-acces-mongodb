@@ -5,4 +5,5 @@ use SystemController
 use RoleController
 use UserController
 use LoginController
+use RoleApi
 run ApplicationController

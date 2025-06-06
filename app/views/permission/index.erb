@@ -110,6 +110,37 @@
 
   const copyAllPermissions = (event, roleId) => {
     event.preventDefault();
-    console.log(roleId)
+    let alert = document.getElementById("message-alert");
+    fetch(`${BASE_URL}apis/v1/roles/${roleId}/permissions`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+        // Agrega Authorization o headers personalizados si los necesitas
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      // console.log("Permisos recibidos:", data);
+      navigator.clipboard.writeText(JSON.stringify(data))
+      .then(() => {
+        alert.innerHTML = 'JSON de todos los permisos del rol copiado al portapapeles';
+        alert.classList.add('alert-success');
+        alert.classList.remove('d-none');
+        dNoneAlert(alert);
+      })
+      .catch(err => {
+        alert.innerHTML = 'Error al copiar JSON de los permisos del rol al portapeles';
+        alert.classList.add('alert-danger');
+        alert.classList.remove('d-none');
+        dNoneAlert(alert);
+        console.error('Error al copiar:', err);
+      });
+    })
+    .catch(error => {
+      console.error("Error al obtener permisos:", error);
+    });
   }
 </script>
